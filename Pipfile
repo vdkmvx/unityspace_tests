@@ -9,6 +9,7 @@ psycopg2 = "*"
 python-dotenv = "*"
 allure-pytest = "*"
 requests = "*"
+pre-commit = "*"
 
 [dev-packages]
 

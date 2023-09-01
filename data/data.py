@@ -13,7 +13,7 @@ valid_emails = [
     "linda_wilson@emailprovider.org",
     "david.clark@emailspot.com",
     "olivia.smith@emailplace.net",
-    "andrew_lee@emailsite.info"
+    "andrew_lee@emailsite.info",
 ]
 
 invalid_emails = [
@@ -32,14 +32,19 @@ invalid_emails = [
     "maxwell.brown@host.",
     "linda_wilson@provider.",
     "david.clark@.com",
-    "olivia.smith@place."
+    "olivia.smith@place.",
 ]
 
-valid_passwords = ['12345678', 'qwertyui', 'q1w2e3r4', '123456789']
+valid_passwords = ["12345678", "qwertyui", "q1w2e3r4", "123456789"]
 
-invalid_passwords = ['', '1234567', 'qwertyu']
+invalid_passwords = ["", "1234567", "qwertyu"]
 
-invalid_ids = [1222222222222222222222222222222222222222222222222222222222222222, 0, -10, '1235678']
+invalid_ids = [
+    1222222222222222222222222222222222222222222222222222222222222222,
+    0,
+    -10,
+    "1235678",
+]
 
 get_api = [
     "/admin/auth/refresh",
@@ -139,7 +144,5 @@ post_api = [
     "/files/initiateUpload",
     "/files/upload",
     "/files/completeUpload",
-    "/files/delete-from-s3"
+    "/files/delete-from-s3",
 ]
-
-MAIN_URL = "http://localhost:3333"
