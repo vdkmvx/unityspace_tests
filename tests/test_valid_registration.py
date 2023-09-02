@@ -8,6 +8,7 @@ load_dotenv()
 
 HOST = os.getenv("HOST")
 TEST_EMAIL = os.getenv("TEST_EMAIL")
+TEST_EMAIL_TWO = os.getenv("TEST_EMAIL_TWO")
 
 
 def test_registration(database):
@@ -37,6 +38,6 @@ def test_valid_registration_with_valid_emails(email):
 @pytest.mark.parametrize("password", valid_passwords)
 def test_valid_registration_with_valid_passwords(password):
     response = requests.post(
-        HOST + "/auth/register", data={"email": TEST_EMAIL, "password": password}
+        HOST + "/auth/register", data={"email": TEST_EMAIL_TWO, "password": password}
     )
     assert response.status_code == 201
