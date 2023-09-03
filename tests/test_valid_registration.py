@@ -1,14 +1,7 @@
 import pytest
-from dotenv import load_dotenv
-import os
 import requests
 from data.data import valid_emails, valid_passwords
-
-load_dotenv()
-
-HOST = os.getenv("HOST")
-TEST_EMAIL = os.getenv("TEST_EMAIL")
-TEST_EMAIL_TWO = os.getenv("TEST_EMAIL_TWO")
+from data.getenv import TEST_EMAIL_TWO, TEST_EMAIL, HOST, TEST_PASSWORD
 
 
 def test_registration(database):

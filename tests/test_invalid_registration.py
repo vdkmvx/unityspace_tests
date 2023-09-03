@@ -1,12 +1,7 @@
-from data.data import invalid_emails, invalid_passwords, valid_emails
+from data.data import invalid_emails, invalid_passwords
+from data.getenv import HOST
 import requests
-from dotenv import load_dotenv
-import os
 import pytest
-
-load_dotenv()
-
-HOST = os.getenv("HOST")
 
 
 @pytest.mark.parametrize("email", invalid_emails)
