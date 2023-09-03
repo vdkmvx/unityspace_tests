@@ -5,8 +5,8 @@ from data.getenv import TEST_EMAIL_TWO, TEST_EMAIL, HOST, TEST_PASSWORD
 
 
 def test_registration(database):
-    response = requests.post(
-        HOST + "/auth/register", data={"email": TEST_EMAIL, "password": "12345678"}
+    requests.post(
+        HOST + "/auth/register", data={"email": TEST_EMAIL, "password": TEST_PASSWORD}
     )
     sql_query = f"SELECT code FROM email_verifications WHERE email = '{TEST_EMAIL}'"
     cursor = database.cursor()
@@ -23,7 +23,7 @@ def test_registration(database):
 @pytest.mark.parametrize("email", valid_emails)
 def test_valid_registration_with_valid_emails(email):
     response = requests.post(
-        HOST + "/auth/register", data={"email": email, "password": "12345678"}
+        HOST + "/auth/register", data={"email": email, "password": TEST_PASSWORD}
     )
     assert response.status_code == 201
 

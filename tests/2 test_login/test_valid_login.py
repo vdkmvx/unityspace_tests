@@ -2,7 +2,7 @@ import requests
 from data.getenv import HOST, TEST_EMAIL, TEST_PASSWORD
 
 
-def test_login():
+def test_valid_login():
     response = requests.post(
         HOST + "/auth/login", data={"email": TEST_EMAIL, "password": TEST_PASSWORD}
     )
