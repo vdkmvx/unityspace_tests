@@ -1,20 +1,26 @@
 import pytest
 import requests
 from data.data import valid_emails, valid_passwords
-from data.getenv import TEST_EMAIL_TWO, TEST_EMAIL, HOST, TEST_PASSWORD
+from data.getenv import (
+    TEST_VALID_REGISTRATION_EMAIL,
+    HOST,
+    TEST_PASSWORD,
+    TEST_VALID_REGISTRATION_EMAIL_TWO,
+)
 
 
 def test_registration(database):
     requests.post(
-        HOST + "/auth/register", data={"email": TEST_EMAIL, "password": TEST_PASSWORD}
+        HOST + "/auth/register",
+        data={"email": TEST_VALID_REGISTRATION_EMAIL, "password": TEST_PASSWORD},
     )
-    sql_query = f"SELECT code FROM email_verifications WHERE email = '{TEST_EMAIL}'"
+    sql_query = f"SELECT code FROM email_verifications WHERE email = '{TEST_VALID_REGISTRATION_EMAIL}'"
     cursor = database.cursor()
     cursor.execute(sql_query)
     result = cursor.fetchone()
     confirm_email = requests.post(
         HOST + "/auth/verify-email-registration",
-        data={"email": TEST_EMAIL, "code": result, "referrer": ""},
+        data={"email": TEST_VALID_REGISTRATION_EMAIL, "code": result, "referrer": ""},
     )
 
     assert confirm_email.status_code == 201
@@ -31,6 +37,7 @@ def test_valid_registration_with_valid_emails(email):
 @pytest.mark.parametrize("password", valid_passwords)
 def test_valid_registration_with_valid_passwords(password):
     response = requests.post(
-        HOST + "/auth/register", data={"email": TEST_EMAIL_TWO, "password": password}
+        HOST + "/auth/register",
+        data={"email": TEST_VALID_REGISTRATION_EMAIL_TWO, "password": password},
     )
     assert response.status_code == 201

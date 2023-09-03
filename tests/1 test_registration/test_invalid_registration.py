@@ -1,4 +1,4 @@
-from data.data import invalid_emails, invalid_passwords
+from data.data import invalid_emails, invalid_passwords, valid_emails
 from data.getenv import HOST, TEST_PASSWORD
 import requests
 import pytest
@@ -12,10 +12,11 @@ def test_invalid_registration_with_invalid_emails(email):
     assert response.status_code == 400
 
 
+@pytest.mark.parametrize("email", valid_emails)
 @pytest.mark.parametrize("password", invalid_passwords)
-def test_invalid_registration_with_invalid_passwords(password):
+def test_invalid_registration_with_invalid_passwords(password, email):
     response = requests.post(
         HOST + "/auth/register",
-        data={"email": "password@test.ru", "password": password},
+        data={"email": email, "password": password},
     )
     assert response.status_code == 400

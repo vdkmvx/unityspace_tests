@@ -1,7 +1,7 @@
 import requests
 import pytest
-from data.getenv import HOST, TEST_PASSWORD, TEST_EMAIL_TWO
-from data.data import valid_emails, invalid_emails, valid_passwords, invalid_passwords
+from data.getenv import HOST, TEST_PASSWORD, TEST_INVALID_LOGIN_EMAIL
+from data.data import valid_emails, invalid_emails, invalid_passwords
 
 
 @pytest.mark.parametrize("email", valid_emails)
@@ -23,6 +23,7 @@ def test_invalid_login_with_invalid_emails(email):
 @pytest.mark.parametrize("password", invalid_passwords)
 def test_invalid_login_with_invalid_passwords(password):
     response = requests.post(
-        HOST + "/auth/login", data={"email": TEST_EMAIL_TWO, "password": password}
+        HOST + "/auth/login",
+        data={"email": TEST_INVALID_LOGIN_EMAIL, "password": password},
     )
     assert response.status_code == 400

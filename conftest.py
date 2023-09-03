@@ -9,11 +9,11 @@ from data.getenv import (
     DB_USERNAME,
     HOST,
     TEST_PASSWORD,
-    TEST_EMAIL,
+    TEST_EMAIL_SPACES,
 )
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def database():
     try:
         connection = psycopg2.connect(
@@ -30,11 +30,26 @@ def database():
 
 
 @pytest.fixture(scope="session")
-def login():
+def login_spaces(database):
+    requests.post(
+        HOST + "/auth/register",
+        data={"email": TEST_EMAIL_SPACES, "password": TEST_PASSWORD},
+    )
+    sql_query = (
+        f"SELECT code FROM email_verifications WHERE email = '{TEST_EMAIL_SPACES}'"
+    )
+    cursor = database.cursor()
+    cursor.execute(sql_query)
+    result = cursor.fetchone()
+    requests.post(
+        HOST + "/auth/verify-email-registration",
+        data={"email": TEST_EMAIL_SPACES, "code": result, "referrer": ""},
+    )
+
     _session = requests.Session()
-    print(_session.headers)
     response = requests.post(
-        HOST + "/auth/login", data={"email": TEST_EMAIL, "password": TEST_PASSWORD}
+        HOST + "/auth/login",
+        data={"email": TEST_EMAIL_SPACES, "password": TEST_PASSWORD},
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
