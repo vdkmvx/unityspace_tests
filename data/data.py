@@ -52,6 +52,9 @@ invalid_space_id = [
     -10,
 ]
 
+invalid_names = ["", " "]
+valid_names = ["1", "name"]
+
 get_api = [
     "/admin/auth/refresh",
     "/admin/orders/1",
