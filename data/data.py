@@ -54,6 +54,7 @@ invalid_space_id = [
 
 invalid_names = ["", " "]
 valid_names = ["1", "name"]
+background_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 get_api = [
     "/admin/auth/refresh",
