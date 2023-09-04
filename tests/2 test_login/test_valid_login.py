@@ -1,7 +1,9 @@
 import requests
 from data.getenv import HOST, TEST_VALID_LOGIN_EMAIL, TEST_PASSWORD
+import allure
 
 
+@allure.title("POST /auth/login")
 def test_valid_login(database):
     requests.post(
         HOST + "/auth/register",

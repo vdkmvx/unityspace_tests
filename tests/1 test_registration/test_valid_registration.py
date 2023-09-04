@@ -1,3 +1,4 @@
+import allure
 import pytest
 import requests
 from data.data import valid_emails, valid_passwords
@@ -9,6 +10,7 @@ from data.getenv import (
 )
 
 
+@allure.title("POST /auth/register")
 def test_registration(database):
     requests.post(
         HOST + "/auth/register",
@@ -26,6 +28,7 @@ def test_registration(database):
     assert confirm_email.status_code == 201
 
 
+@allure.title("POST /auth/register")
 @pytest.mark.parametrize("email", valid_emails)
 def test_valid_registration_with_valid_emails(email):
     response = requests.post(
@@ -34,6 +37,7 @@ def test_valid_registration_with_valid_emails(email):
     assert response.status_code == 201
 
 
+@allure.title("POST /auth/register")
 @pytest.mark.parametrize("password", valid_passwords)
 def test_valid_registration_with_valid_passwords(password):
     response = requests.post(

@@ -1,5 +1,6 @@
 import requests
 import pytest
+import allure
 from data.getenv import HOST, TEST_PASSWORD, TEST_INVALID_LOGIN_EMAIL
 from data.data import valid_emails, invalid_emails, invalid_passwords
 
@@ -20,6 +21,7 @@ def test_invalid_login_with_invalid_emails(email):
     assert response.status_code == 400
 
 
+@allure.title("POST /auth/login")
 @pytest.mark.parametrize("password", invalid_passwords)
 def test_invalid_login_with_invalid_passwords(password):
     response = requests.post(
