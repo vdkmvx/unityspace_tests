@@ -1,6 +1,14 @@
 import pytest
 from data.getenv import HOST
-from data.data import invalid_space_id, invalid_names, valid_names, background_ids
+from data.data import (
+    invalid_space_id,
+    invalid_names,
+    valid_names,
+    background_ids,
+    valid_ids,
+    invalid_orders,
+    valid_orders,
+)
 import allure
 
 
@@ -142,3 +150,156 @@ def test_space_share_link_on(login_spaces):
     space_id = login_spaces.get(HOST + "/spaces").json()[0]["id"]
     response = login_spaces.post(HOST + f"/spaces/{space_id}/share-link/on")
     assert response.status_code == 201
+
+
+@allure.title("POST /spaces/space_id/share-link/off")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_invalid_space_share_link_on(login_spaces, space_id):
+    response = login_spaces.post(HOST + f"/spaces/{space_id}/share-link/off")
+    assert response.status_code == 400
+
+
+@allure.title("POST /spaces/space_id/share-link/on")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_invalid_space_share_link_on(login_spaces, space_id):
+    response = login_spaces.post(HOST + f"/spaces/{space_id}/share-link/on")
+    assert response.status_code == 400
+
+
+@allure.title("GET /spaces/space_id/projects")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_get_projects_from_invalid_space(login_spaces, space_id):
+    response = login_spaces.get(HOST + f"/spaces/{space_id}/projects")
+    assert response.status_code == 400
+
+
+@allure.title("GET /spaces/space_id/projects")
+def test_get_projects_from_valid_space(login_spaces):
+    space_id = login_spaces.get(HOST + "/spaces").json()[0]["id"]
+    response = login_spaces.get(HOST + f"/spaces/{space_id}/projects")
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /spaces/space_id/members/member_id")
+def test_delete_member_from_space(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_member_id = space["members"][0]["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/members/{space_member_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /spaces/space_id/members/member_id")
+@pytest.mark.parametrize("space_member_id", invalid_space_id)
+def test_delete_invalid_members_from_space(login_spaces, space_member_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/members/{space_member_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/members/member_id")
+@pytest.mark.parametrize("space_member_id", valid_ids)
+def test_delete_invalid_members_from_space(login_spaces, space_member_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/members/{space_member_id}"
+    )
+    assert response.status_code == 404
+
+
+@allure.title("PATCH /spaces/space_id/order")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_invalid_order_space(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/order", json={"order": order}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/order")
+@pytest.mark.parametrize("order", valid_orders)
+def test_change_order_space(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/order", json={"order": order}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /spaces/space_id/order")
+@pytest.mark.parametrize("order", valid_orders)
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_change_order_invalid_space(login_spaces, order, space_id):
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/order", json={"order": order}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/columns/column_id")
+@pytest.mark.parametrize("order", valid_orders)
+def test_change_column_order_space(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_column_id = space["columns"][0]["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/columns/{space_column_id}", json={"order": order}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /spaces/space_id/columns/column_id")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_column_invalid_order_space(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_column_id = space["columns"][0]["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/columns/{space_column_id}", json={"order": order}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/columns/column_id")
+@pytest.mark.parametrize("order", valid_orders)
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_change_column_invalid_order_space(login_spaces, order, space_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_column_id = space["columns"][0]["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/columns/{space_column_id}", json={"order": order}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/columns/column_id")
+@pytest.mark.parametrize("order", valid_orders)
+@pytest.mark.parametrize("space_column_id", invalid_space_id)
+def test_change_column_invalid_order_space(login_spaces, order, space_column_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/columns/{space_column_id}", json={"order": order}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/columns/column_id")
+@pytest.mark.parametrize("order", valid_orders)
+@pytest.mark.parametrize("space_column_id", valid_ids)
+def test_change_invalid_column_order_space(login_spaces, order, space_column_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/columns/{space_column_id}", json={"order": order}
+    )
+    assert response.status_code == 404
