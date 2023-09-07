@@ -10,6 +10,7 @@ from data.getenv import (
     HOST,
     TEST_PASSWORD,
     TEST_EMAIL_SPACES,
+    TEST_EMAIL_PROJECTS,
 )
 
 
@@ -50,6 +51,33 @@ def login_spaces(database):
     response = requests.post(
         HOST + "/auth/login",
         data={"email": TEST_EMAIL_SPACES, "password": TEST_PASSWORD},
+    )
+    auth = response.json()["access_token"]
+    _session.headers.update({"Authorization": f"Bearer {auth}"})
+    return _session
+
+
+@pytest.fixture(scope="session")
+def login_projects(database):
+    requests.post(
+        HOST + "/auth/register",
+        data={"email": TEST_EMAIL_PROJECTS, "password": TEST_PASSWORD},
+    )
+    sql_query = (
+        f"SELECT code FROM email_verifications WHERE email = '{TEST_EMAIL_PROJECTS}'"
+    )
+    cursor = database.cursor()
+    cursor.execute(sql_query)
+    result = cursor.fetchone()
+    requests.post(
+        HOST + "/auth/verify-email-registration",
+        data={"email": TEST_EMAIL_PROJECTS, "code": result, "referrer": ""},
+    )
+
+    _session = requests.Session()
+    response = requests.post(
+        HOST + "/auth/login",
+        data={"email": TEST_EMAIL_PROJECTS, "password": TEST_PASSWORD},
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
