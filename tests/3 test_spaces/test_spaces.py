@@ -8,6 +8,8 @@ from data.data import (
     valid_ids,
     invalid_orders,
     valid_orders,
+    valid_emails,
+    invalid_emails,
 )
 import allure
 
@@ -451,3 +453,348 @@ def test_change_column_name_into_space(login_spaces, name):
         json={"name": name},
     )
     assert response.status_code == 200
+
+
+@allure.title("POST /spaces/space_id/reglament-columns")
+def test_create_reglament_column_into_space(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.post(
+        HOST + f"/spaces/{space_id}/reglament-columns",
+        json={"name": "Колонка", "order": 1},
+    )
+    assert response.status_code == 201
+
+
+@allure.title("POST /spaces/space_id/reglament-columns")
+@pytest.mark.parametrize("name", invalid_names)
+def test_create_reglament_column_into_space(login_spaces, name):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.post(
+        HOST + f"/spaces/{space_id}/reglament-columns", json={"name": name, "order": 1}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /spaces/space_id/reglament-columns")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_create_reglament_column_into_invalid_space(login_spaces, space_id):
+    response = login_spaces.post(
+        HOST + f"/spaces/{space_id}/reglament-columns",
+        json={"name": "Колонка", "order": 2},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("GET /spaces/space_id/reglaments")
+def test_get_space_reglaments(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.get(HOST + f"/spaces/{space_id}/reglaments")
+    assert response.status_code == 200
+
+
+@allure.title("GET /spaces/space_id/reglaments")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+def test_get_invalid_space_reglaments(login_spaces, space_id):
+    response = login_spaces.get(HOST + f"/spaces/{space_id}/reglaments")
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+@pytest.mark.parametrize("space_reglament_column_id", invalid_space_id)
+def test_change_reglament_column_name_with_invalid_space_and_invalid_column(
+    login_spaces, space_id, space_reglament_column_id
+):
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("space_reglament_column_id", invalid_space_id)
+def test_change_reglament_column_name_with_invalid_column(
+    login_spaces, space_reglament_column_id
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+def test_change_reglament_column_name_with_invalid_column(
+    login_spaces, space_reglament_column_id
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+def test_change_reglament_column_name_with_invalid_column(
+    login_spaces, space_reglament_column_id
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("name", invalid_names)
+def test_change_reglament_column_space_name_with_invalid_name(login_spaces, name):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_reglament_column_id = space["reglamentColumns"][0]["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": name},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/name")
+@pytest.mark.parametrize("name", valid_names)
+def test_change_reglament_column_name_into_space(login_spaces, name):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_reglament_column_id = space["reglamentColumns"][0]["id"]
+    response = login_spaces.patch(
+        HOST + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/name",
+        json={"name": name},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /spaces/space_id/reglament-columns/column_id")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+def test_delete_reglament_column_with_invalid_space_id(
+    login_spaces, space_reglament_column_id, space_id
+):
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/columns/{space_reglament_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/reglament-columns/column_id")
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+def test_delete_invalid_reglament_column_with_space_id(
+    login_spaces, space_reglament_column_id
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/columns/{space_reglament_column_id}"
+    )
+    assert response.status_code == 404
+
+
+@allure.title("DELETE /spaces/space_id/reglament-columns/column_id")
+@pytest.mark.parametrize("space_reglament_column_id", invalid_space_id)
+def test_delete_invalid_reglament_column_with_space_id(
+    login_spaces, space_reglament_column_id
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/columns/{space_reglament_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/reglament-columns/column_id")
+def test_delete_reglament_column_with_space_id(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_reglament_column_id = space["columns"][0]["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/columns/{space_reglament_column_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("space_id", invalid_space_id)
+@pytest.mark.parametrize("space_reglament_column_id", invalid_space_id)
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_reglament_column_order_with_invalid_space_and_invalid_column(
+    login_spaces, space_id, space_reglament_column_id, order
+):
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("space_reglament_column_id", invalid_space_id)
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_reglament_column_order_with_invalid_column(
+    login_spaces, space_reglament_column_id, order
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_reglament_column_order_with_invalid_column(
+    login_spaces, space_reglament_column_id, order
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("space_reglament_column_id", valid_ids)
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_reglament_column_order_with_invalid_column(
+    login_spaces, space_reglament_column_id, order
+):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_change_reglament_column_space_name_with_invalid_name(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_reglament_column_id = space["reglamentColumns"][0]["id"]
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /spaces/space_id/reglaments-columns/column_id/order")
+@pytest.mark.parametrize("order", valid_orders)
+def test_change_reglament_column_order_into_space(login_spaces, order):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_reglament_column_id = space["reglamentColumns"][0]["id"]
+    response = login_spaces.patch(
+        HOST
+        + f"/spaces/{space_id}/reglament-columns/{space_reglament_column_id}/order",
+        json={"order": order},
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("email", valid_emails)
+@allure.title("POST /spaces/space_id/share")
+def test_share_valid_email_to_space(login_spaces, email):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.post(
+        HOST + f"/spaces/{space_id}/share", json={"email": email}
+    )
+    assert response.status_code == 201
+
+
+@pytest.mark.parametrize("email", invalid_emails)
+@allure.title("POST /spaces/space_id/share")
+def test_share_invalid_email_to_space(login_spaces, email):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.post(
+        HOST + f"/spaces/{space_id}/share", json={"email": email}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/invite/remove")
+def test_remove_invite_to_space(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_member_invite_id = space["invites"][0]["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/invite/remove", json={"id": space_member_invite_id}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /spaces/space_id/invite/remove")
+@pytest.mark.parametrize("space_member_invite_id", invalid_space_id)
+def test_remove_invalid_invite_to_space(login_spaces, space_member_invite_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/invite/remove", json={"id": space_member_invite_id}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/invite/remove")
+@pytest.mark.parametrize("space_member_invite_id", invalid_orders)
+def test_remove_invalid_invite_to_space(login_spaces, space_member_invite_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/invite/remove", json={"id": space_member_invite_id}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/invite/remove")
+def test_remove_invalid_invite_to_space(login_spaces):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    space_member_invite_id = space["invites"][0]["id"] + 777
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/invite/remove", json={"id": space_member_invite_id}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /spaces/space_id/invite/remove")
+@pytest.mark.parametrize("space_member_invite_id", valid_orders)
+def test_remove_invalid_invite_to_space(login_spaces, space_member_invite_id):
+    space = login_spaces.get(HOST + "/spaces").json()[0]
+    space_id = space["id"]
+    response = login_spaces.delete(
+        HOST + f"/spaces/{space_id}/invite/remove", json={"id": space_member_invite_id}
+    )
+    assert response.status_code == 400
