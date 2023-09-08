@@ -163,3 +163,6 @@ cython_debug/
 #Allure
 allure-results
 allure-report
+
+#Запуск тестов
+test.sh
