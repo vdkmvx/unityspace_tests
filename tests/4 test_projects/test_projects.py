@@ -10,6 +10,7 @@ from data.data import (
     valid_orders,
     invalid_orders,
     invalid_project_limit,
+    boolean,
 )
 
 
@@ -827,5 +828,484 @@ def test_66_update_stage_order_with_invalid_order(login_projects, order):
     response = login_projects.patch(
         HOST + f"/projects/updateStageOrder/{project_stage_id}",
         json={"order": invalid_orders},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateProjectStage/moveProject")
+def test_67_update_project_stage(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateProjectStage/moveProject",
+        json={"stageId": project_stage_id, "newProjectId": project_id},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/updateProjectStage/moveProject")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_68_update_project_stage(login_projects, project_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateProjectStage/moveProject",
+        json={"stageId": project_stage_id, "newProjectId": project_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateProjectStage/moveProject")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_69_update_project_stage(login_projects, project_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateProjectStage/moveProject",
+        json={"stageId": project_stage_id, "newProjectId": project_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateProjectStage/moveProject")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_70_update_project_stage(login_projects, project_stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateProjectStage/moveProject",
+        json={"stageId": project_stage_id, "newProjectId": project_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateProjectStage/moveProject")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_71_update_project_stage(login_projects, project_stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateProjectStage/moveProject",
+        json={"stageId": project_stage_id, "newProjectId": project_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/showProjectReviewTab")
+@pytest.mark.parametrize("show", boolean)
+def test_72_show_project_review_tab(login_projects, show):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/showProjectReviewTab",
+        json={
+            "show": show,
+        },
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/showProjectReviewTab")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_73_show_project_review_tab(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/showProjectReviewTab",
+        json={
+            "show": True,
+        },
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/showProjectReviewTab")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_74_show_project_review_tab(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/showProjectReviewTab",
+        json={
+            "show": True,
+        },
+    )
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/tasks")
+def test_75_get_tasks_into_project(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/tasks")
+    assert response.status_code == 200
+
+
+@allure.title("GET /projects/project_id/tasks")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_76_get_tasks_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/tasks")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/tasks")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_77_get_tasks_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/tasks")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/archiveTasks/page")
+def test_78_get_archive_task_into_project(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/1")
+    assert response.status_code == 200
+
+
+@allure.title("GET /projects/project_id/archiveTasks/page")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_79_get_archive_task_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/1")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/archiveTasks/page")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_80_get_archive_task_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/1")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/archiveTasks/page")
+@pytest.mark.parametrize("page", valid_ids)
+def test_81_get_archive_task_into_project(login_projects, page):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/{page}")
+    assert response.status_code == 200
+
+
+@allure.title("GET /projects/project_id/archiveTasks/page")
+@pytest.mark.parametrize("page", invalid_space_id)
+def test_82_get_archive_task_into_project(login_projects, page):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/{page}")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/storageTasks/page")
+def test_83_get_storage_task_into_project(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/storageTasks/1")
+    assert response.status_code == 200
+
+
+@allure.title("GET /projects/project_id/storageTasks/page")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_84_get_storage_task_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/storageTasks/1")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/storageTasks/page")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_85_get_storage_task_into_project(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/storageTasks/1")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/storageTasks/page")
+@pytest.mark.parametrize("page", valid_ids)
+def test_86_get_storage_task_into_project(login_projects, page):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/archiveTasks/{page}")
+    assert response.status_code == 200
+
+
+@allure.title("GET /projects/project_id/storageTasks/page")
+@pytest.mark.parametrize("page", invalid_space_id)
+def test_87_get_storage_task_into_project(login_projects, page):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/storageTasks/{page}")
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/embed")
+def test_88_create_embed(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": "string", "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("POST /projects/project_id/embed")
+def test_88_create_embed(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": "string", "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 201
+
+
+@allure.title("POST /projects/project_id/embed")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_89_create_embed(login_projects, project_id):
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": "string", "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/embed")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_90_create_embed(login_projects, project_id):
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": "string", "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/embed")
+@pytest.mark.parametrize("name", valid_names)
+def test_91_create_embed(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": name, "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 201
+
+
+@allure.title("POST /projects/project_id/embed")
+@pytest.mark.parametrize("name", invalid_names)
+def test_92_create_embed(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": name, "url": "https://unityspace.ru"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/embed")
+def test_93_create_embed(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": "string", "name": "name", "url": "unityspace.ru"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/embed")
+@pytest.mark.parametrize("category", invalid_names)
+def test_94_create_embed(login_projects, category):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/embed",
+        json={"category": category, "name": "name", "url": "unityspace.ru"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/changeEmbedOrder/embed_id/order")
+@pytest.mark.parametrize("order", valid_orders)
+def test_95_change_embed_order(login_projects, order):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_embed_id = project["embeddings"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/changeEmbedOrder/{project_embed_id}/order",
+        json={
+            "order": order,
+        },
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/changeEmbedOrder/embed_id/order")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_96_change_embed_order(login_projects, order):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_embed_id = project["embeddings"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/changeEmbedOrder/{project_embed_id}/order",
+        json={
+            "order": order,
+        },
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/changeEmbedOrder/embed_id/order")
+@pytest.mark.parametrize("project_embed_id", invalid_space_id)
+def test_97_change_embed_order(login_projects, project_embed_id):
+    response = login_projects.patch(
+        HOST + f"/projects/changeEmbedOrder/{project_embed_id}/order",
+        json={
+            "order": 1,
+        },
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/changeEmbedOrder/embed_id/order")
+@pytest.mark.parametrize("project_embed_id", valid_ids)
+def test_98_change_embed_order(login_projects, project_embed_id):
+    response = login_projects.patch(
+        HOST + f"/projects/changeEmbedOrder/{project_embed_id}/order",
+        json={
+            "order": 1,
+        },
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/embed/embed_id")
+def test_99_delete_embed(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_embed_id = project["embeddings"][0]["id"]
+    response = login_projects.delete(
+        HOST + f"/projects/{project_id}/embed/{project_embed_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /projects/project_id/embed/embed_id")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_100_delete_embed(login_projects, project_id):
+    response = login_projects.delete(HOST + f"/projects/{project_id}/embed/1")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/embed/embed_id")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_101_delete_embed(login_projects, project_id):
+    response = login_projects.delete(HOST + f"/projects/{project_id}/embed/1")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/embed/embed_id")
+@pytest.mark.parametrize("project_embed_id", invalid_space_id)
+def test_102_delete_embed(login_projects, project_embed_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.delete(
+        HOST + f"/projects/{project_id}/embed/{project_embed_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/embed/embed_id")
+@pytest.mark.parametrize("project_embed_id", valid_ids)
+def test_103_delete_embed(login_projects, project_embed_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.delete(
+        HOST + f"/projects/{project_id}/embed/{project_embed_id}"
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.skip(reason="Запрос надо поправить")
+@allure.title("PATCH /projects/{projectId}/embed/{embedId}")
+def test_104_change_embed():
+    pass
+
+
+@allure.title("PATCH /projects/project_id/changeColumn/column_id")
+def test_105_change_project_into_new_column(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    space = login_projects.get(HOST + "/spaces").json()[0]
+    space_column_id = space["columns"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeColumn/{space_column_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/changeColumn/column_id")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_106_change_project_into_new_column(login_projects, project_id):
+    space = login_projects.get(HOST + "/spaces").json()[0]
+    space_column_id = space["columns"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeColumn/{space_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/changeColumn/column_id")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_107_change_project_into_new_column(login_projects, project_id):
+    space = login_projects.get(HOST + "/spaces").json()[0]
+    space_column_id = space["columns"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeColumn/{space_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/changeColumn/column_id")
+@pytest.mark.parametrize("space_column_id", valid_ids)
+def test_108_change_project_into_new_column(login_projects, space_column_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeColumn/{space_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/changeColumn/column_id")
+@pytest.mark.parametrize("space_column_id", invalid_space_id)
+def test_109_change_project_into_new_column(login_projects, space_column_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeColumn/{space_column_id}"
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/changeTimelineViewType")
+@pytest.mark.parametrize("type", boolean)
+def test_110_change_project_into_new_column(login_projects, type):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeTimelineViewType", json={"type": type}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/changeTimelineViewType")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_111_change_project_into_new_column(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeTimelineViewType", json={"type": True}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/changeTimelineViewType")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_112_change_project_into_new_column(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/changeTimelineViewType", json={"type": True}
     )
     assert response.status_code == 400

@@ -72,6 +72,8 @@ valid_orders = [
     -10,
 ]
 
+boolean = [True, False]
+
 invalid_names = ["", " "]
 valid_names = ["1", "name"]
 background_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

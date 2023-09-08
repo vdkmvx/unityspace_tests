@@ -88,6 +88,7 @@ def login_projects(database):
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
+    # return _session
     yield _session
     try:
         sql_drop_table = 'DELETE FROM users WHERE "id" >= 1;'
