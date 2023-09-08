@@ -9,6 +9,7 @@ from data.data import (
     invalid_post_task_day_count,
     valid_orders,
     invalid_orders,
+    invalid_project_limit,
 )
 
 
@@ -585,5 +586,246 @@ def test_46_change_project_description_with_invalid_project_id(
 ):
     response = login_projects.patch(
         HOST + f"/projects/{project_id}/description", json={"description": ""}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_47_delete_stage_into_invalid_project(login_projects, project_id):
+    response = login_projects.delete(HOST + f"/projects/{project_id}/stages/1")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_48_delete_stage_into_invalid_project(login_projects, project_id):
+    response = login_projects.delete(HOST + f"/projects/{project_id}/stages/1")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("stage_id", invalid_space_id)
+def test_49_delete_invalid_stage_into_project(login_projects, stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.delete(HOST + f"/projects/{project_id}/stages/{stage_id}")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("stage_id", valid_ids)
+def test_50_delete_invalid_stage_into_project(login_projects, stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.delete(HOST + f"/projects/{project_id}/stages/{stage_id}")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+def test_51_delete_invalid_stage_into_project(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.delete(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("stage_id", valid_ids)
+def test_50_delete_invalid_stage_into_project(login_projects, stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.delete(HOST + f"/projects/{project_id}/stages/{stage_id}")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /projects/project_id/stages/stage_id")
+def test_51_delete_invalid_stage_into_project(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.delete(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}"
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("name", valid_names)
+def test_52_change_name_stage_into_project(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}", json={"name": name}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("name", invalid_names)
+def test_53_change_invalid_name_stage_into_project(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}", json={"name": name}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_54_change_name_stage_into_invalid_project(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/1", json={"name": "Колонка"}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_55_change_name_stage_into_invalid_project(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/1", json={"name": "Колонка"}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_56_change_name_invalid_stage_into_project(login_projects, project_stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_57_change_name_invalid_stage_into_project(login_projects, project_stage_id):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}",
+        json={"name": "Колонка"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_58_change_project_stage_limit_with_invalid_project(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/1/limit", json={"taskLimit": None}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_59_change_project_stage_limit_with_invalid_project(login_projects, project_id):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/1/limit", json={"taskLimit": None}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_60_change_project_stage_limit_with_invalid_project_stage(
+    login_projects, project_stage_id
+):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}/limit",
+        json={"taskLimit": None},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_61_change_project_stage_limit_with_invalid_project_stage(
+    login_projects, project_stage_id
+):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}/limit",
+        json={"taskLimit": None},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("task_limit", valid_ids)
+def test_62_change_project_stage_limit(login_projects, task_limit):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}/limit",
+        json={"taskLimit": task_limit},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/stages/stage_id/limit")
+@pytest.mark.parametrize("task_limit", invalid_project_limit)
+def test_63_change_project_stage_limit(login_projects, task_limit):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/stages/{project_stage_id}/limit",
+        json={"taskLimit": task_limit},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateStageOrder/stage_id")
+def test_64_update_stage_order(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateStageOrder/{project_stage_id}", json={"order": 1}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/updateStageOrder/stage_id")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_64_update_stage_order_with_invalid_stage_id(login_projects, project_stage_id):
+    response = login_projects.patch(
+        HOST + f"/projects/updateStageOrder/{project_stage_id}", json={"order": 1}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateStageOrder/stage_id")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_65_update_stage_order_with_invalid_stage_id(login_projects, project_stage_id):
+    response = login_projects.patch(
+        HOST + f"/projects/updateStageOrder/{project_stage_id}", json={"order": 1}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/updateStageOrder/stage_id")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_66_update_stage_order_with_invalid_order(login_projects, order):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/updateStageOrder/{project_stage_id}",
+        json={"order": invalid_orders},
     )
     assert response.status_code == 400

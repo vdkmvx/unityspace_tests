@@ -54,7 +54,14 @@ def login_spaces(database):
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
-    return _session
+    yield _session
+    try:
+        sql_drop_table = 'DELETE FROM users WHERE "id" >= 1;'
+        cursor.execute(sql_drop_table)
+        database.commit()  # Commit the changes to the database
+    except Exception as e:
+        database.rollback()  # Rollback changes in case of an exception
+        print(f"Error during cleanup: {str(e)}")
 
 
 @pytest.fixture(scope="session")
@@ -81,4 +88,11 @@ def login_projects(database):
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
-    return _session
+    yield _session
+    try:
+        sql_drop_table = 'DELETE FROM users WHERE "id" >= 1;'
+        cursor.execute(sql_drop_table)
+        database.commit()  # Commit the changes to the database
+    except Exception as e:
+        database.rollback()  # Rollback changes in case of an exception
+        print(f"Error during cleanup: {str(e)}")
