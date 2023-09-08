@@ -449,3 +449,141 @@ def test_33_move_project_with_invalid_orders(login_projects, space_column_order)
         json={"columnId": space_column_id, "order": space_column_order},
     )
     assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("name", valid_names)
+def test_34_create_stage_into_project(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": name, "order": 0, "tasks": []},
+    )
+    assert response.status_code == 201
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("name", invalid_names)
+def test_35_create_stage_into_project_with_invalid_name(login_projects, name):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": name, "order": 0, "tasks": []},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_36_create_stage_into_project_with_invalid_project_id(
+    login_projects, project_id
+):
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": "Колонка", "order": 0, "tasks": []},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_37_create_stage_into_project_with_invalid_project_id(
+    login_projects, project_id
+):
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": "Колонка", "order": 0, "tasks": []},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("order", invalid_orders)
+def test_38_create_stage_into_project_with_invalid_order(login_projects, order):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": "Колонка", "order": order, "tasks": []},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("task", invalid_space_id)
+def test_39_create_stage_into_project_with_invalid_task(login_projects, task):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": "Колонка", "order": 0, "tasks": [task]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /projects/project_id/stages")
+@pytest.mark.parametrize("task", valid_ids)
+def test_40_create_stage_into_project_with_invalid_task(login_projects, task):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.post(
+        HOST + f"/projects/{project_id}/stages",
+        json={"name": "Колонка", "order": 0, "tasks": [task]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/description")
+@pytest.mark.parametrize("project_id", valid_ids)
+def test_41_get_project_description_with_invalid_id(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/description")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/description")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_42_get_project_description_with_invalid_id(login_projects, project_id):
+    response = login_projects.get(HOST + f"/projects/{project_id}/description")
+    assert response.status_code == 400
+
+
+@allure.title("GET /projects/project_id/description")
+def test_43_get_project_description(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.get(HOST + f"/projects/{project_id}/description")
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/description")
+def test_44_change_project_description(login_projects):
+    project = login_projects.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/description", json={"description": ""}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /projects/project_id/description")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_45_change_project_description_with_invalid_project_id(
+    login_projects, project_id
+):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/description", json={"description": ""}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /projects/project_id/description")
+@pytest.mark.parametrize("project_id", invalid_space_id)
+def test_46_change_project_description_with_invalid_project_id(
+    login_projects, project_id
+):
+    response = login_projects.patch(
+        HOST + f"/projects/{project_id}/description", json={"description": ""}
+    )
+    assert response.status_code == 400
