@@ -226,13 +226,80 @@ def test_11_create_task(login_tasks):
 
 @allure.title("GET /tasks/myHistory/page")
 @pytest.mark.parametrize("page", valid_ids)
-def test_12_create_task(login_tasks, page):
+def test_12_get_my_history(login_tasks, page):
     response = login_tasks.post(HOST + f"/tasks/myHistory/{page}")
     assert response.status_code == 404
 
 
 @allure.title("GET /tasks/myHistory/page")
 @pytest.mark.parametrize("page", invalid_space_id)
-def test_13_create_task(login_tasks, page):
+def test_13_get_my_history(login_tasks, page):
     response = login_tasks.post(HOST + f"/tasks/myHistory/{page}")
     assert response.status_code == 404
+
+
+@pytest.mark.skip("Шо это такое")
+@allure.title("POST /tasks/duplicate")
+def test_14_duplicate_task():
+    pass
+
+
+@allure.title("POST /tasks/move")  #
+def test_15_task_move(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.post(
+        HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
+    )
+    assert response.status_code == 201
+
+
+@allure.title("POST /tasks/move")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_16_task_move(login_tasks, project_stage_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.post(
+        HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/move")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_17_task_move(login_tasks, project_stage_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.post(
+        HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/move")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_18_task_move(login_tasks, task_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_tasks.post(
+        HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/move")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_19_task_move(login_tasks, task_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_tasks.post(
+        HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
+    )
+    assert response.status_code == 400
