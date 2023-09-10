@@ -100,7 +100,7 @@ def login_projects(database):
 
 
 @pytest.fixture(scope="session")
-def login_taks(database):
+def login_tasks(database):
     requests.post(
         HOST + "/auth/register",
         data={"email": TEST_EMAIL_TASKS, "password": TEST_PASSWORD},
