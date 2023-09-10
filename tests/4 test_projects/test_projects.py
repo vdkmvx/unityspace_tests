@@ -1040,7 +1040,7 @@ def test_88_create_embed(login_projects):
         HOST + f"/projects/{project_id}/embed",
         json={"category": "string", "name": "string", "url": "https://unityspace.ru"},
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 @allure.title("POST /projects/project_id/embed")
