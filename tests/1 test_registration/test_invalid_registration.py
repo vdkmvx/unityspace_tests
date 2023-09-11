@@ -7,7 +7,7 @@ import allure
 
 @allure.title("POST /auth/register")
 @pytest.mark.parametrize("email", invalid_emails)
-def test_invalid_registration_with_invalid_emails(email):
+def test_1_invalid_registration_with_invalid_emails(email):
     response = requests.post(
         HOST + "/auth/register", data={"email": email, "password": TEST_PASSWORD}
     )
@@ -17,7 +17,7 @@ def test_invalid_registration_with_invalid_emails(email):
 @allure.title("POST /auth/register")
 @pytest.mark.parametrize("email", valid_emails)
 @pytest.mark.parametrize("password", invalid_passwords)
-def test_invalid_registration_with_invalid_passwords(password, email):
+def test_2_invalid_registration_with_invalid_passwords(password, email):
     response = requests.post(
         HOST + "/auth/register",
         data={"email": email, "password": password},

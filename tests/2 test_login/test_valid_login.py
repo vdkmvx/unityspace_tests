@@ -4,7 +4,7 @@ import allure
 
 
 @allure.title("POST /auth/login")
-def test_valid_login(database):
+def test_1_valid_login(database):
     requests.post(
         HOST + "/auth/register",
         data={"email": TEST_VALID_LOGIN_EMAIL, "password": TEST_PASSWORD},

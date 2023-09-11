@@ -11,7 +11,7 @@ from data.getenv import (
 
 
 @allure.title("POST /auth/register")
-def test_registration(database):
+def test_1_registration(database):
     requests.post(
         HOST + "/auth/register",
         data={"email": TEST_VALID_REGISTRATION_EMAIL, "password": TEST_PASSWORD},
@@ -30,7 +30,7 @@ def test_registration(database):
 
 @allure.title("POST /auth/register")
 @pytest.mark.parametrize("email", valid_emails)
-def test_valid_registration_with_valid_emails(email):
+def test_2_valid_registration_with_valid_emails(email):
     response = requests.post(
         HOST + "/auth/register", data={"email": email, "password": TEST_PASSWORD}
     )
@@ -39,7 +39,7 @@ def test_valid_registration_with_valid_emails(email):
 
 @allure.title("POST /auth/register")
 @pytest.mark.parametrize("password", valid_passwords)
-def test_valid_registration_with_valid_passwords(password):
+def test_3_valid_registration_with_valid_passwords(password):
     response = requests.post(
         HOST + "/auth/register",
         data={"email": TEST_VALID_REGISTRATION_EMAIL_TWO, "password": password},

@@ -244,7 +244,7 @@ def test_14_duplicate_task():
     pass
 
 
-@allure.title("POST /tasks/move")  #
+@allure.title("POST /tasks/move")
 def test_15_task_move(login_tasks):
     project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
     project_id = project["id"]
@@ -302,4 +302,222 @@ def test_19_task_move(login_tasks, task_id):
     response = login_tasks.post(
         HOST + "/tasks/move", json={"stageId": project_stage_id, "taskIds": [task_id]}
     )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/complete")
+def test_20_task_complete(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    project_stage_id = project["stages"][0]["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + "/tasks/complete",
+        json={"stageId": project_stage_id, "tasksIds": [task_id]},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/complete")
+@pytest.mark.parametrize("project_stage_id", invalid_space_id)
+def test_21_task_complete(login_tasks, project_stage_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + "/tasks/complete",
+        json={"stageId": project_stage_id, "tasksIds": [task_id]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/complete")
+@pytest.mark.parametrize("project_stage_id", valid_ids)
+def test_22_task_complete(login_tasks, project_stage_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + "/tasks/complete",
+        json={"stageId": project_stage_id, "tasksIds": [task_id]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/complete")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_23_task_complete(login_tasks, task_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_tasks.patch(
+        HOST + "/tasks/complete",
+        json={"stageId": project_stage_id, "tasksIds": [task_id]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/complete")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_24_task_complete(login_tasks, task_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_stage_id = project["stages"][0]["id"]
+    response = login_tasks.patch(
+        HOST + "/tasks/complete",
+        json={"stageId": project_stage_id, "tasksIds": [task_id]},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /tasks/task_id")
+def test_25_delete_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.delete(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 200
+
+
+@allure.title("DELETE /tasks/task_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_26_delete_task(login_tasks, task_id):
+    response = login_tasks.delete(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 400
+
+
+@allure.title("DELETE /tasks/task_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_27_delete_task(login_tasks, task_id):
+    response = login_tasks.delete(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id")
+def test_28_get_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.get(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 200
+
+
+@allure.title("GET /tasks/task_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_29_get_task(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_30_get_task(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}")
+    assert response.status_code == 403
+
+
+@allure.title("POST /tasks/task_id/tag/tag_id")
+def test_31_add_tag_to_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.post(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 201
+
+
+@allure.title("POST /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_32_add_tag_to_task(login_tasks, task_id):
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.post(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_33_add_tag_to_task(login_tasks, task_id):
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.post(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("tag_id", valid_ids)
+def test_34_add_tag_to_task(login_tasks, tag_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.post(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("POST /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("tag_id", invalid_space_id)
+def test_35_add_tag_to_task(login_tasks, tag_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.post(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("Непонятный запрос PATCH /tasks/task_id/tag/tag_id")
+def test_36_delete_tag_from_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 200
+
+
+@allure.title("Непонятный запрос PATCH /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_37_delete_tag_from_task(login_tasks, task_id):
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("Непонятный запрос PATCH /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_38_delete_tag_from_task(login_tasks, task_id):
+    tag = login_tasks.get(HOST + "/tags").json()[0]
+    tag_id = tag["id"]
+    response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("Непонятный запрос PATCH /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("tag_id", valid_ids)
+def test_39_delete_tag_from_task(login_tasks, tag_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
+    assert response.status_code == 400
+
+
+@allure.title("Непонятный запрос PATCH /tasks/task_id/tag/tag_id")
+@pytest.mark.parametrize("tag_id", invalid_space_id)
+def test_40_delete_tag_from_task(login_tasks, tag_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
     assert response.status_code == 400

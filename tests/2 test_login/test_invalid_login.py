@@ -6,7 +6,7 @@ from data.data import valid_emails, invalid_emails, invalid_passwords
 
 
 @pytest.mark.parametrize("email", valid_emails)
-def test_invalid_login_with_unregistred_emails(email):
+def test_1_invalid_login_with_unregistred_emails(email):
     response = requests.post(
         HOST + "/auth/login", data={"email": email, "password": TEST_PASSWORD}
     )
@@ -14,7 +14,7 @@ def test_invalid_login_with_unregistred_emails(email):
 
 
 @pytest.mark.parametrize("email", invalid_emails)
-def test_invalid_login_with_invalid_emails(email):
+def test_2_invalid_login_with_invalid_emails(email):
     response = requests.post(
         HOST + "/auth/login", data={"email": email, "password": TEST_PASSWORD}
     )
@@ -23,7 +23,7 @@ def test_invalid_login_with_invalid_emails(email):
 
 @allure.title("POST /auth/login")
 @pytest.mark.parametrize("password", invalid_passwords)
-def test_invalid_login_with_invalid_passwords(password):
+def test_3_invalid_login_with_invalid_passwords(password):
     response = requests.post(
         HOST + "/auth/login",
         data={"email": TEST_INVALID_LOGIN_EMAIL, "password": password},
