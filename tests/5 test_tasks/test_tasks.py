@@ -749,3 +749,27 @@ def test_61_update_task_color(login_tasks, task_id):
         HOST + f"/tasks/updateTaskColor/{task_id}", json={"color": ""}
     )
     assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id/history")
+def test_62_get_task_history(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/history")
+    assert response.status_code == 200
+
+
+@allure.title("GET /tasks/task_id/history")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_63_get_task_history(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/history")
+    assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id/history")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_64_get_task_history(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/history")
+    assert response.status_code == 400
