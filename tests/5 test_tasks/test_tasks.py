@@ -622,3 +622,130 @@ def test_50_change_name_into_task(login_tasks, task_id):
         HOST + f"/tasks/updateTaskName/{task_id}", json={"name": "123"}
     )
     assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/task_id/blockReason")
+def test_51_block_reason_for_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/blockReason", json={"blockReason": ""}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/task_id/blockReason")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_52_block_reason_for_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/blockReason", json={"blockReason": ""}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/task_id/blockReason")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_53_block_reason_for_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/blockReason", json={"blockReason": ""}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskResponsible/task_id")
+def test_54_update_task_responsible(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    space = login_tasks.get(HOST + "/spaces").json()[0]
+    space_member_id = space["members"][0]["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskResponsible/{task_id}",
+        json={"responsibleId": space_member_id},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/updateTaskResponsible/task_id")
+@pytest.mark.parametrize("space_member_id", invalid_space_id)
+def test_55_update_task_responsible(login_tasks, space_member_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskResponsible/{task_id}",
+        json={"responsibleId": space_member_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskResponsible/task_id")
+@pytest.mark.parametrize("space_member_id", valid_ids)
+def test_56_update_task_responsible(login_tasks, space_member_id):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskResponsible/{task_id}",
+        json={"responsibleId": space_member_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskResponsible/task_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_57_update_task_responsible(login_tasks, task_id):
+    space = login_tasks.get(HOST + "/spaces").json()[0]
+    space_member_id = space["members"][0]["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskResponsible/{task_id}",
+        json={"responsibleId": space_member_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskResponsible/task_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_58_update_task_responsible(login_tasks, task_id):
+    space = login_tasks.get(HOST + "/spaces").json()[0]
+    space_member_id = space["members"][0]["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskResponsible/{task_id}",
+        json={"responsibleId": space_member_id},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskColor/task_id")
+def test_59_update_task_color(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskColor/{task_id}", json={"color": ""}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/updateTaskColor/task_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_60_update_task_color(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskColor/{task_id}", json={"color": ""}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskColor/task_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_61_update_task_color(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskColor/{task_id}", json={"color": ""}
+    )
+    assert response.status_code == 400

@@ -162,7 +162,7 @@ cython_debug/
 
 #Allure
 allure-results
-#allure-report
+allure-report
 
 #Запуск тестов
 test.sh
