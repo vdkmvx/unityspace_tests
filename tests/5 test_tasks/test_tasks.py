@@ -521,3 +521,104 @@ def test_40_delete_tag_from_task(login_tasks, tag_id):
     task_id = task["id"]
     response = login_tasks.patch(HOST + f"/tasks/{task_id}/tag/{tag_id}")
     assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/task_id/description")
+def test_41_change_description_into_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/description",
+        json={"description": "<p>string</p>", "descriptionText": "string"},
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/task_id/description")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_42_change_description_into_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/description",
+        json={"description": "string", "descriptionText": "string"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/task_id/description")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_43_change_description_into_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/{task_id}/description",
+        json={"description": "string", "descriptionText": "string"},
+    )
+    assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id/description")
+def test_44_get_description_into_task(login_tasks):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/description")
+    assert response.status_code == 200
+
+
+@allure.title("GET /tasks/task_id/description")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_45_get_description_into_task(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/description")
+    assert response.status_code == 400
+
+
+@allure.title("GET /tasks/task_id/description")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_46_get_description_into_task(login_tasks, task_id):
+    response = login_tasks.get(HOST + f"/tasks/{task_id}/description")
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskName/task_id")
+@pytest.mark.parametrize("name", valid_names)
+def test_47_change_name_into_task(login_tasks, name):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskName/{task_id}", json={"name": name}
+    )
+    assert response.status_code == 200
+
+
+@allure.title("PATCH /tasks/updateTaskName/task_id")
+@pytest.mark.parametrize("name", invalid_names)
+def test_48_change_name_into_task(login_tasks, name):
+    project = login_tasks.get(HOST + "/projects/all-projects").json()[0]
+    project_id = project["id"]
+    task = login_tasks.get(HOST + f"/projects/{project_id}/tasks").json()[0]
+    task_id = task["id"]
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskName/{task_id}", json={"name": name}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskName/task_id")
+@pytest.mark.parametrize("task_id", invalid_space_id)
+def test_49_change_name_into_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskName/{task_id}", json={"name": "123"}
+    )
+    assert response.status_code == 400
+
+
+@allure.title("PATCH /tasks/updateTaskName/task_id")
+@pytest.mark.parametrize("task_id", valid_ids)
+def test_50_change_name_into_task(login_tasks, task_id):
+    response = login_tasks.patch(
+        HOST + f"/tasks/updateTaskName/{task_id}", json={"name": "123"}
+    )
+    assert response.status_code == 400
