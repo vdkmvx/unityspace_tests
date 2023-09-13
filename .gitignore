@@ -165,4 +165,6 @@ allure-results
 allure-report
 
 #Запуск тестов
-test.sh
+pytest_generate_open.sh
+generate_open.sh
+open.sh
