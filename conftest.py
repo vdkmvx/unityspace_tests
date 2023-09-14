@@ -12,6 +12,7 @@ from data.getenv import (
     TEST_EMAIL_SPACES,
     TEST_EMAIL_PROJECTS,
     TEST_EMAIL_TASKS,
+    TEST_EMAIL_REGLAMENTS,
 )
 
 
@@ -120,6 +121,40 @@ def login_tasks(database):
     response = requests.post(
         HOST + "/auth/login",
         data={"email": TEST_EMAIL_TASKS, "password": TEST_PASSWORD},
+    )
+    auth = response.json()["access_token"]
+    _session.headers.update({"Authorization": f"Bearer {auth}"})
+    yield _session
+    try:
+        sql_drop_table = 'DELETE FROM users WHERE "id" >= 1;'
+        cursor.execute(sql_drop_table)
+        database.commit()  # Commit the changes to the database
+    except Exception as e:
+        database.rollback()  # Rollback changes in case of an exception
+        print(f"Error during cleanup: {str(e)}")
+
+
+@pytest.fixture(scope="session")
+def login_reglaments(database):
+    requests.post(
+        HOST + "/auth/register",
+        data={"email": TEST_EMAIL_REGLAMENTS, "password": TEST_PASSWORD},
+    )
+    sql_query = (
+        f"SELECT code FROM email_verifications WHERE email = '{TEST_EMAIL_REGLAMENTS}'"
+    )
+    cursor = database.cursor()
+    cursor.execute(sql_query)
+    result = cursor.fetchone()
+    requests.post(
+        HOST + "/auth/verify-email-registration",
+        data={"email": TEST_EMAIL_REGLAMENTS, "code": result, "referrer": ""},
+    )
+
+    _session = requests.Session()
+    response = requests.post(
+        HOST + "/auth/login",
+        data={"email": TEST_EMAIL_REGLAMENTS, "password": TEST_PASSWORD},
     )
     auth = response.json()["access_token"]
     _session.headers.update({"Authorization": f"Bearer {auth}"})
